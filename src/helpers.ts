@@ -64,16 +64,16 @@ export class Helpers{
   /**
    * Returns a user object from an access token
    */
-  public static getUserByAccessToken(token){
+  public static getUserByAccessToken(id){
     let cassandra = Di.get('data/cassandra');
     //debug(`Looking up ${token}`);
     //console.log(`[oauth]: ${token}`);
     return new Promise((resolve, reject) => {
 
-      cassandra.client.execute("SELECT * FROM entities WHERE key=?", [token], {prepare: true},
+      cassandra.client.execute("SELECT * FROM oauth_access_tokens WHERE token_id=?", [id], {prepare: true},
         (err, result) => {
           if(err){
-            //console.log(`[oauth]${token} failed`);
+            console.log(`[oauth]${id} failed`);
             reject(err);
             return;
           }
@@ -82,27 +82,8 @@ export class Helpers{
             reject();
             return;
           }
-
-          let user_guid;
-
-          let data: any = (<any[]>result.rows).reduce((carry, row) => {
-            carry[row.column1] = row.value;
-            return carry;
-          }, {});
-
-          if (data.expires) {
-            let expires = parseInt(data.expires, 10),
-              now = Date.now() / 1000;
-
-            if (expires <= now) {
-              reject('Expired access token');
-            }
-          }
-
-          user_guid = data.user_id;
-          //debug(`Token ${token} resolved as ${user_guid}`);
-          //console.log(`[oauth]${token} resolved  ${user_guid}`);
-          resolve(user_guid);
+  
+          resolve(result.rows[0].user_id);
         });
 
     });
@@ -112,7 +93,7 @@ export class Helpers{
   /**
    * Return a session from a session token
    */
-   public static async getSession(id){
+   public static async getSession(user_guid, id){
     let redis = Di.get('data/redis');
 
     try {
@@ -132,13 +113,13 @@ export class Helpers{
     let cassandra = Di.get('data/cassandra');
     return new Promise((resolve, reject) => {
       cassandra.client.execute(
-        "SELECT * FROM session WHERE key=?", [id], {prepare: true},
+        "SELECT * FROM jwt_sessions WHERE id=? ALLOW FILTERING", [id], {prepare: true},
         (err, result) => {
+          //console.log(err, result);
           if(err)
             return reject(true);
           for(var i=0; i < result.rows.length; i++){
-            if(result.rows[i].column1 = 'data')
-              return resolve(result.rows[i].value);
+              return resolve(result.rows[i]);
           }
           reject(true);
         });

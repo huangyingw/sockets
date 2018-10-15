@@ -2,6 +2,9 @@ import * as async from 'async';
 import { Di } from '../core/di/di';
 import { Helpers } from '../helpers';
 import { Bootstrap } from '../bootstrap';
+import * as jwt from 'jsonwebtoken';
+import * as config from '../../config';
+import { readFileSync  } from 'fs';
 
 export class Register {
 
@@ -21,14 +24,27 @@ export class Register {
           return;
       }
 
-      Helpers.getUserByAccessToken(access_token)
-        .then((user_guid) => {
-          if(user_guid != guid){
-            return;
-          }
+      const cert = readFileSync('../../oauth-pub.key');
+      jwt.verify(access_token, cert, (err, decoded) => {
 
-          Bootstrap.register(this.socket, user_guid);
-        });
+        if(err){
+          console.log('[jwt]: token not found');
+          return; //token not found, could be a mobile user though
+        }
+
+        let id = decoded.jti;
+
+        Helpers.getUserByAccessToken(id)
+          .then((user_guid) => {
+            console.log('guid is ' + user_guid);
+            if(user_guid != guid){
+              return;
+            }
+
+            Bootstrap.register(this.socket, user_guid);
+          });
+
+      });
 
     });
   }
