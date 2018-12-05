@@ -96,7 +96,7 @@ export class Helpers{
    public static async getSession(user_guid, id){
     let redis = Di.get('data/redis');
 
-    try {
+    /*try {
       let cached = await new Promise((resolve, reject) => {
         redis.client.get(id, (err, response) => {
           if(err){
@@ -108,7 +108,7 @@ export class Helpers{
       });
       if (cached)
         return cached;
-    } catch (err) { }
+    } catch (err) { }*/
 
     let cassandra = Di.get('data/cassandra');
     return new Promise((resolve, reject) => {
