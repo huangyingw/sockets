@@ -1,0 +1,21 @@
+[commit]
+    message = n
+[merge]
+    allow = true
+[vrun]
+    silent = false
+    async = false
+[remote "Minds"]
+    url = https://gitlab.com/Minds/sockets
+    fetch = +refs/heads/*:refs/remotes/Minds/*
+[push]
+    remote = origin
+[gsync]
+    remote = Minds
+    branch = master
+[branch "dev"]
+    remote = origin
+    merge = refs/heads/dev
+[remote "origin"]
+	url = git@github.com:huangyingw/sockets.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
