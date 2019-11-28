@@ -52,29 +52,14 @@ export class IO {
         let guid = decoded.guid;
         let sessionId = decoded.sessionId;
 
-        Helpers.getSession(sessionId)
-          .then((base64 : string) => {
-            let session;
-            try {
-              session = atob(base64);
-            } catch (err) {
-              session = base64; //incase its not
-            }
-            
-            if(session.indexOf(guid) > -1){
-              
+        Helpers.getSession(guid, sessionId)
+          .then(() => {
               Bootstrap.register(socket, guid);
               console.log(`[jwt]: ${guid} just joined`);
-
               next();
-            } else {
-                //session not found for user
-                console.log('[jwt]: session not found for ' + guid + ' ' + sessionId);
-              return next();
-            }
           })
           .catch(() => {
-            console.log('[jwt]: no session found');
+            console.log('[jwt]: no session found for ' + guid + ' ' + sessionId);
             next();
           });
 
