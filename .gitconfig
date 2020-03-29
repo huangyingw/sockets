@@ -6,7 +6,7 @@
     silent = false
     async = false
 [remote "Minds"]
-    url = https://gitlab.com/Minds/sockets
+    url = https://github.com/minds/sockets.git
     fetch = +refs/heads/*:refs/remotes/Minds/*
 [push]
     remote = origin
