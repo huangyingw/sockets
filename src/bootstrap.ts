@@ -8,6 +8,5 @@ export class Bootstrap {
 
     socket.emit('registered', guid);
     Online.push(guid);
-    console.log(guid + ' now registered');
   }
 }
