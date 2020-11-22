@@ -1,0 +1,12 @@
+diff --git a/containers/sockets/Dockerfile b/containers/sockets/Dockerfile
+index 575c901..e39b7fc 100644
+--- ./containers/sockets/Dockerfile
++++ ./containers/sockets/Dockerfile
+@@ -1,6 +1,6 @@
+ FROM node:8-alpine
+ 
+-RUN apk add --no-cache git
++RUN apk add  git
+ 
+ COPY . .
+ 
